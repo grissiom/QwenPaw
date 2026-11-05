@@ -106,6 +106,13 @@
       height: var(--app-icon-default);
     }
 
+    // The SDK stop square occupies only a quarter of its SVG canvas.
+    [class$="-sender-actions-btn-loading-icon"] rect {
+      transform-box: fill-box;
+      transform-origin: center;
+      transform: scale(2);
+    }
+
     [class$="-sender-prefix"] button [data-spark-icon],
     [class$="-sender-actions-list"] button [data-spark-icon],
     [class$="-sender-actions-btn"] [data-spark-icon] {
@@ -215,6 +222,25 @@
   flex: 0 0 auto !important;
 }
 
+@media (min-width: 1000px) {
+  .chatMessagesArea.advisorComposer :global {
+    [class$="-sender-content-bottom"] {
+      flex-wrap: nowrap;
+    }
+
+    [class$="-sender-prefix"] {
+      flex: 1 1 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+}
+
 @media (max-width: 1024px) {
   .filesPreviewOpen,
   .filesWorkspaceOpen {
@@ -241,6 +267,22 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  /* Anchors the conversation width handles to the chat column. */
+  position: relative;
+}
+
+/* Conversation width axis: ChatContentWidthHandles publishes the user's chosen
+ * column width; the transcript and composer follow the same axis. The fallbacks
+ * keep the shipped widths until the user drags an edge. */
+.chatMainArea :global {
+  .qwenpaw-chat-anywhere-message-list .qwenpaw-bubble-list {
+    max-width: var(--qwenpaw-chat-user-content-width, 960px) !important;
+  }
+
+  .qwenpaw-chat-anywhere-input-wrapper,
+  .qwenpaw-chat-anywhere-sender-wrapper {
+    max-width: var(--qwenpaw-chat-user-content-width, 850px) !important;
+  }
 }
 
 /* Chat messages scrollable area */
@@ -276,7 +318,7 @@
       .qwenpaw-bubble-list,
       .qwenpaw-chat-anywhere-input-wrapper,
       .qwenpaw-chat-anywhere-sender-wrapper {
-        max-width: none !important;
+        max-width: var(--qwenpaw-chat-user-content-width, none) !important;
       }
 
       .qwenpaw-chat-anywhere-input-wrapper,
@@ -432,9 +474,10 @@
 
     [class$="-sender-content-bottom"] {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr);
       align-items: center;
       column-gap: 8px;
+      row-gap: 4px;
       margin-top: 8px;
     }
 
@@ -480,7 +523,7 @@
       flex: 0 0 auto;
     }
 
-    [class$="-sender-actions-btn"] {
+    [data-qwenpaw-composer-submit="true"] {
       width: 44px !important;
       min-width: 44px !important;
       height: 44px !important;
